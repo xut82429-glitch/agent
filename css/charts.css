@@ -1,0 +1,401 @@
+/* ===== Chart.js 图表容器样式 ===== */
+
+.chart-container {
+    position: relative;
+    width: 100%;
+    padding: var(--space-lg);
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    transition: all var(--transition-normal);
+}
+
+.chart-container:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+}
+
+.chart-title {
+    font-size: var(--font-lg);
+    font-weight: var(--font-semibold);
+    color: var(--text-primary);
+    margin-bottom: var(--space-md);
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.chart-subtitle {
+    font-size: var(--font-sm);
+    color: var(--text-secondary);
+    margin-top: var(--space-xs);
+}
+
+.canvas-wrapper {
+    position: relative;
+    width: 100%;
+    height: 300px;
+    margin-top: var(--space-md);
+}
+
+.canvas-wrapper canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* 不同尺寸的图表 */
+.chart-small .canvas-wrapper {
+    height: 200px;
+}
+
+.chart-large .canvas-wrapper {
+    height: 400px;
+}
+
+/* ===== 图表图例自定义 ===== */
+.chart-legend {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+    margin-top: var(--space-md);
+    padding-top: var(--space-md);
+    border-top: 1px solid var(--border-color);
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-size: var(--font-sm);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.legend-item:hover {
+    color: var(--text-primary);
+}
+
+.legend-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: var(--radius-full);
+    flex-shrink: 0;
+}
+
+/* ===== 数据卡片带迷你图表 ===== */
+
+.stat-card-chart {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-lg);
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-normal);
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card-chart::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary-500), var(--primary-300));
+    opacity: 0;
+    transition: opacity var(--transition-normal);
+}
+
+.stat-card-chart:hover::before {
+    opacity: 1;
+}
+
+.stat-card-chart:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-4px);
+}
+
+.stat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--space-md);
+}
+
+.stat-label {
+    font-size: var(--font-sm);
+    color: var(--text-secondary);
+    font-weight: var(--font-medium);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.stat-value {
+    font-size: var(--font-3xl);
+    font-weight: var(--font-bold);
+    color: var(--text-primary);
+    line-height: 1;
+    margin: var(--space-sm) 0;
+}
+
+.stat-change {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    font-size: var(--font-sm);
+    font-weight: var(--font-semibold);
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+}
+
+.stat-change.positive {
+    color: var(--success-500);
+    background: var(--success-50);
+}
+
+.stat-change.negative {
+    color: var(--danger-500);
+    background: var(--danger-50);
+}
+
+.stat-change.neutral {
+    color: var(--warning-500);
+    background: var(--warning-50);
+}
+
+.mini-chart {
+    height: 60px;
+    margin-top: var(--space-md);
+}
+
+/* ===== 实时监控仪表盘 ===== */
+
+.gauge-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: var(--space-xl) 0;
+}
+
+.gauge-wrapper {
+    position: relative;
+    width: 200px;
+    height: 200px;
+}
+
+.gauge-value {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.gauge-number {
+    font-size: var(--font-4xl);
+    font-weight: var(--font-bold);
+    color: var(--text-primary);
+    line-height: 1;
+}
+
+.gauge-unit {
+    font-size: var(--font-lg);
+    color: var(--text-secondary);
+    margin-top: var(--space-xs);
+}
+
+.gauge-label {
+    font-size: var(--font-sm);
+    color: var(--text-muted);
+    margin-top: var(--space-sm);
+}
+
+/* ===== 热力图网格 ===== */
+
+.heatmap-grid {
+    display: grid;
+    gap: 3px;
+    padding: var(--space-md);
+}
+
+.heatmap-cell {
+    aspect-ratio: 1;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    position: relative;
+}
+
+.heatmap-cell:hover {
+    transform: scale(1.2);
+    z-index: 10;
+    box-shadow: var(--shadow-lg);
+}
+
+.heatmap-tooltip {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: var(--space-sm) var(--space-md);
+    white-space: nowrap;
+    font-size: var(--font-sm);
+    box-shadow: var(--shadow-lg);
+    z-index: 100;
+    opacity: 0;
+    visibility: hidden;
+    transition: all var(--transition-fast);
+}
+
+.heatmap-cell:hover .heatmap-tooltip {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* 热力图颜色等级 */
+.heatmap-level-0 { background: var(--gray-200); }
+.heatmap-level-1 { background: #9ae6b4; }
+.heatmap-level-2 { background: #68d391; }
+.heatmap-level-3 { background: #48bb78; }
+.heatmap-level-4 { background: #38a169; }
+
+/* ===== 树状图 (Treemap) ===== */
+
+.treemap-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    padding: var(--space-md);
+    height: 300px;
+    overflow: hidden;
+    border-radius: var(--radius-md);
+}
+
+.treemap-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: var(--space-sm);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    position: relative;
+    overflow: hidden;
+    color: white;
+    font-weight: var(--font-semibold);
+    text-align: center;
+}
+
+.treemap-item:hover {
+    z-index: 5;
+    box-shadow: var(--shadow-xl);
+    transform: scale(1.02);
+}
+
+.treemap-label {
+    font-size: var(--font-sm);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+.treemap-value {
+    font-size: var(--font-xl);
+    font-weight: var(--font-bold);
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+/* ===== 漏斗图 ===== */
+
+.funnel-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    padding: var(--space-md);
+}
+
+.funnel-stage {
+    position: relative;
+    padding: var(--space-md) var(--space-lg);
+    background: linear-gradient(90deg, var(--primary-500), var(--primary-300));
+    color: white;
+    border-radius: var(--radius-md);
+    text-align: center;
+    transition: all var(--transition-normal);
+    clip-path: polygon(0% 0%, 100% 0%, 95% 100%, 5% 100%);
+}
+
+.funnel-stage:hover {
+    transform: translateX(5px);
+    box-shadow: var(--shadow-lg);
+}
+
+.funnel-stage:nth-child(1) { background: linear-gradient(90deg, var(--primary-600), var(--primary-400)); }
+.funnel-stage:nth-child(2) { 
+    width: 85%; 
+    align-self: center;
+    background: linear-gradient(90deg, var(--primary-500), var(--primary-300)); 
+}
+.funnel-stage:nth-child(3) { 
+    width: 70%; 
+    align-self: center;
+    background: linear-gradient(90deg, var(--primary-400), var(--primary-200)); 
+}
+.funnel-stage:nth-child(4) { 
+    width: 55%; 
+    align-self: center;
+    background: linear-gradient(90deg, var(--success-500), var(--success-300)); 
+}
+
+.funnel-label {
+    font-size: var(--font-sm);
+    opacity: 0.9;
+}
+
+.funnel-value {
+    font-size: var(--font-2xl);
+    font-weight: var(--font-bold);
+    margin-top: var(--space-xs);
+}
+
+.funnel-percentage {
+    font-size: var(--font-xs);
+    opacity: 0.8;
+    margin-top: 2px;
+}
+
+/* ===== 雷达图/蜘蛛图 ===== */
+
+.radar-legend-custom {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-sm);
+    margin-top: var(--space-lg);
+    padding-top: var(--space-md);
+    border-top: 1px solid var(--border-color);
+}
+
+.radar-metric {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-sm);
+    border-radius: var(--radius-sm);
+    background: var(--bg-tertiary);
+}
+
+.metric-name {
+    font-size: var(--font-sm);
+    color: var(--text-secondary);
+}
+
+.metric-score {
+    font-size: var(--font-sm);
+    font-weight: var(--font-bold);
+    color: var(--primary-500);
+}

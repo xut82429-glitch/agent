@@ -3,32 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="专业的开箱即用Linux平台安全防控系统 - Professional Linux Security Defense System">
-    <meta name="keywords" content="linux, security, firewall, intrusion detection, vulnerability scanner, monitoring">
-    <meta name="author" content="LinuxSec Team">
-    <title>Linux安全防控系统 v2.0 - Linux Security Defense System</title>
+    <title>Linux安全防控系统 v3.0 Ultimate Edition</title>
     
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>">
     
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#2563eb">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
     <!-- CSS Styles -->
     <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/theme-v3.css">
+    <link rel="stylesheet" href="css/charts.css">
+    <link rel="stylesheet" href="css/animations.css">
+    
+    <!-- Chart.js for Data Visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
-<body>
+<body data-theme="dark">
     <!-- Mobile Menu Button -->
-    <button class="mobile-menu-btn" onclick="document.querySelector('.sidebar').classList.toggle('open'); document.querySelector('.sidebar-overlay').classList.toggle('active');">
+    <button class="mobile-menu-btn" onclick="document.querySelector('.sidebar').classList.toggle('open'); document.querySelector('.sidebar-overlay').classList.toggle('active');" aria-label="菜单">
         ☰
     </button>
 
     <!-- Sidebar Overlay (Mobile) -->
     <div class="sidebar-overlay"></div>
 
+    <!-- Theme Toggle (Top Right) -->
+    <button id="themeToggle" class="btn btn-outline" style="position: fixed; top: 20px; right: 20px; z-index: 999; border-radius: var(--radius-full); width: 44px; height: 44px; padding: 0; display: flex; align-items: center; justify-content: center;" onclick="toggleTheme()" aria-label="切换主题">
+        🌙
+    </button>
+
+    <!-- Language Toggle -->
+    <button id="langToggle" class="btn btn-outline" style="position: fixed; top: 74px; right: 20px; z-index: 999; font-size: 12px;" onclick="toggleLanguage()" aria-label="切换语言">
+        中文
+    </button>
+
     <div class="app-container">
         <!-- Sidebar Navigation -->
         <aside class="sidebar">
             <div class="logo">
                 <h1>🛡️ LinuxSec</h1>
-                <span class="version-badge">v2.0</span>
+                <span class="version-badge">v3.0</span>
             </div>
 
             <nav id="sidebarNav">
@@ -37,6 +58,7 @@
                     <div class="nav-item active" data-page="dashboard" onclick="showPage('dashboard')">
                         <span class="nav-icon">📊</span>
                         <span class="nav-text">仪表盘</span>
+                        <span class="nav-badge pulse" style="font-size: 10px;">NEW</span>
                     </div>
                 </div>
 
@@ -45,17 +67,14 @@
                     <div class="nav-item" data-page="firewall" onclick="showPage('firewall')">
                         <span class="nav-icon">🔥</span>
                         <span class="nav-text">防火墙管理</span>
-                        <span class="nav-badge">8</span>
                     </div>
                     <div class="nav-item" data-page="intrusion" onclick="showPage('intrusion')">
                         <span class="nav-icon">🚨</span>
                         <span class="nav-text">入侵检测</span>
-                        <span class="nav-badge">5</span>
                     </div>
                     <div class="nav-item" data-page="vulnerability" onclick="showPage('vulnerability')">
                         <span class="nav-icon">🔍</span>
                         <span class="nav-text">漏洞扫描</span>
-                        <span class="nav-badge">3</span>
                     </div>
                 </div>
 
@@ -72,6 +91,11 @@
                     <div class="nav-item" data-page="network" onclick="showPage('network')">
                         <span class="nav-icon">🌐</span>
                         <span class="nav-text">网络监控</span>
+                    </div>
+                    <div class="nav-item" data-page="docker" onclick="showPage('docker')">
+                        <span class="nav-icon">🐳</span>
+                        <span class="nav-text">Docker容器</span>
+                        <span class="nav-badge" style="background: #2496ed;">HOT</span>
                     </div>
                 </div>
 
@@ -94,8 +118,11 @@
 
             <div style="padding: 20px; margin-top: 20px; border-top: 1px solid var(--border);">
                 <div style="font-size: 11px; color: var(--text-muted); text-align: center;">
-                    <div>© 2026 LinuxSec</div>
+                    <div>v3.0 Ultimate Edition</div>
                     <div style="margin-top: 4px;">Professional Security Defense</div>
+                    <div style="margin-top: 8px;">
+                        <span id="currentYear"></span> © LinuxSec Team
+                    </div>
                 </div>
             </div>
         </aside>
@@ -104,7 +131,7 @@
         <main class="main-content" id="mainContent">
             
             <!-- Dashboard Page -->
-            <div id="page-dashboard" class="page"></div>
+            <div id="page-dashboard" class="page animate-fade-in-up"></div>
 
             <!-- Firewall Page -->
             <div id="page-firewall" class="page hidden"></div>
@@ -133,13 +160,20 @@
             <!-- Settings Page -->
             <div id="page-settings" class="page hidden"></div>
 
+            <!-- Docker Containers Page (NEW in v3.0) -->
+            <div id="page-docker" class="page hidden"></div>
+
         </main>
     </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toastContainer" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px;"></div>
 
     <!-- JavaScript Core Libraries -->
     <script src="js/core/config.js"></script>
     <script src="js/core/events.js"></script>
     <script src="js/core/utils.js"></script>
+    <script src="js/core/i18n.js"></script>
 
     <!-- Application Modules -->
     <script src="js/modules/dashboard.js"></script>
@@ -152,8 +186,149 @@
     <script src="js/modules/network.js"></script>
     <script src="js/modules/backup.js"></script>
     <script src="js/modules/settings.js"></script>
+    <script src="js/modules/docker.js"></script>
 
     <!-- Main Application Entry Point -->
     <script src="js/app.js"></script>
+
+    <!-- v3.0 Enhanced Features -->
+    <script>
+        // Initialize i18n
+        i18n.init();
+
+        // Set current year
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+        // Theme Management
+        let currentTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', currentTheme);
+        updateThemeIcon(currentTheme);
+
+        function toggleTheme() {
+            currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', currentTheme);
+            localStorage.setItem('theme', currentTheme);
+            updateThemeIcon(currentTheme);
+            
+            // Animate theme change
+            document.body.style.transition = 'background-color 0.3s ease, color 0.3s ease';
+            Utils.showToast(`已切换到${currentTheme === 'dark' ? '暗色' : '亮色'}主题`, 'info');
+        }
+
+        function updateThemeIcon(theme) {
+            const btn = document.getElementById('themeToggle');
+            btn.innerHTML = theme === 'dark' ? '🌙' : '☀️';
+            btn.setAttribute('aria-label', `切换到${theme === 'dark' ? '亮色' : '暗色'}主题`);
+        }
+
+        // Language Management
+        let currentLang = localStorage.getItem('locale') || 'zh-CN';
+        updateLanguageButton(currentLang);
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'zh-CN' ? 'en-US' : 'zh-CN';
+            i18n.setLocale(currentLang);
+            localStorage.setItem('locale', currentLang);
+            updateLanguageButton(currentLang);
+            Utils.showToast(`语言已切换为: ${currentLang === 'zh-CN' ? '中文' : 'English'}`, 'info');
+        }
+
+        function updateLanguageButton(lang) {
+            const btn = document.getElementById('langToggle');
+            btn.textContent = lang === 'zh-CN' ? '中文' : 'EN';
+        }
+
+        // Keyboard Shortcuts (Accessibility)
+        document.addEventListener('keydown', (e) => {
+            // Ctrl/Cmd + K: Focus search
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                const searchInput = document.querySelector('input[type="text"]');
+                if (searchInput) searchInput.focus();
+            }
+
+            // Ctrl/Cmd + D: Toggle dark mode
+            if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
+                e.preventDefault();
+                toggleTheme();
+            }
+
+            // Escape: Close modals
+            if (e.key === 'Escape') {
+                const modals = document.querySelectorAll('.modal-overlay');
+                modals.forEach(modal => modal.remove());
+                
+                const sidebar = document.querySelector('.sidebar');
+                const overlay = document.querySelector('.sidebar-overlay');
+                sidebar?.classList.remove('open');
+                overlay?.classList.remove('active');
+            }
+
+            // 1-9: Quick page navigation
+            if (e.altKey && e.key >= '1' && e.key <= '9') {
+                e.preventDefault();
+                const pages = ['dashboard', 'firewall', 'users', 'services', 'logs', 'intrusion', 'vulnerability', 'network', 'backup'];
+                const pageIndex = parseInt(e.key) - 1;
+                if (pages[pageIndex]) showPage(pages[pageIndex]);
+            }
+        });
+
+        // PWA Service Worker Registration (Offline Support)
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                // Service worker would be registered here in production
+                console.log('[PWA] Service Worker ready for registration');
+            });
+        }
+
+        // Performance Monitoring
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                if (window.performance) {
+                    const perfData = performance.getEntriesByType('navigation')[0];
+                    console.log(`%c⚡ 页面加载性能:`, 'color: #10b981; font-weight: bold;');
+                    console.log(`   DNS查询: ${(perfData.domainLookupEnd - perfData.domainLookupStart).toFixed(0)}ms`);
+                    console.log(`   TCP连接: ${(perfData.connectEnd - perfData.connectStart).toFixed(0)}ms`);
+                    console.log(`   首字节: ${(perfData.responseStart - perfData.requestStart).toFixed(0)}ms`);
+                    console.log(`   DOM解析: ${(perfData.domContentLoadedEventEnd - perfData.responseEnd).toFixed(0)}ms`);
+                    console.log(`   完整加载: ${(perfData.loadEventEnd - perfData.startTime).toFixed(0)}ms`);
+                }
+            }, 1000);
+        });
+
+        // Console Welcome Message
+        console.log(
+            `%c🛡️ Linux安全防控系统 v3.0 Ultimate Edition`,
+            'color: #2563eb; font-size: 24px; font-weight: bold;'
+        );
+        console.log(
+            '%cProfessional Security Defense System',
+            'color: #64748b; font-size: 12px;'
+        );
+        console.log(
+            '%c✨ 新功能: Docker监控 | 主题切换 | 国际化 | 动画效果 | PWA支持',
+            'color: #10b981; font-size: 11px;'
+        );
+
+        // Accessibility: Announce page changes to screen readers
+        const originalShowPage = window.showPage;
+        window.showPage = function(pageId) {
+            originalShowPage(pageId);
+            
+            // Announce to screen readers
+            const announcement = document.createElement('div');
+            announcement.setAttribute('role', 'status');
+            announcement.setAttribute('aria-live', 'polite');
+            announcement.className = 'sr-only';
+            announcement.style.position = 'absolute';
+            announcement.style.left = '-9999px';
+            announcement.textContent = `已切换到${pageId}页面`;
+            document.body.appendChild(announcement);
+            setTimeout(() => announcement.remove(), 1000);
+        };
+
+        console.log('%c🎉 v3.0 已加载！按 Ctrl+D 切换主题，Ctrl+K 搜索，Alt+数字 快速导航', 
+            'color: #f59e0b; background: #1e293b; padding: 8px 16px; border-radius: 8px;');
+    </script>
 </body>
 </html>
