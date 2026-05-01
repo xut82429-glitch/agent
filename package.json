@@ -1,0 +1,28 @@
+{
+  "name": "linux-security-defense-system",
+  "version": "2.0.0",
+  "description": "专业的开箱即用Linux平台安全防控系统 - Professional Linux Security Defense System",
+  "main": "index.html",
+  "scripts": {
+    "start": "python3 -m http.server 8000",
+    "serve": "npx serve .",
+    "deploy": "./deploy.sh"
+  },
+  "keywords": [
+    "linux",
+    "security",
+    "defense",
+    "firewall",
+    "intrusion-detection",
+    "vulnerability-scanner",
+    "monitoring"
+  ],
+  "author": "LinuxSec Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Paoulo31/1.git"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}
