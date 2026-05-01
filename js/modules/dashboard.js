@@ -585,58 +585,290 @@ class DashboardModule {
         const modal = document.createElement('div');
         modal.className = 'modal-overlay';
         modal.innerHTML = `
-            <div class="modal" style="max-width: 800px;">
+            <div class="modal" style="max-width: 1000px;">
                 <div class="modal-header">
-                    <h3 class="modal-title">🖥️ 详细系统信息</h3>
+                    <h3 class="modal-title">🖥️ 系统信息与健康检查</h3>
                     <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">✕</button>
                 </div>
                 <div class="modal-body">
                     <div class="tabs" style="margin-bottom: 20px;">
-                        <button class="tab active" onclick="this.parentElement.querySelectorAll('.tab').forEach(t=>t.classList.remove('active')); this.classList.add('active'); document.getElementById('sysInfoBasic').classList.remove('hidden'); document.getElementById('sysInfoHardware').classList.add('hidden'); document.getElementById('sysInfoNetwork').classList.add('hidden');">基本信息</button>
-                        <button class="tab" onclick="this.parentElement.querySelectorAll('.tab').forEach(t=>t.classList.remove('active')); this.classList.add('active'); document.getElementById('sysInfoBasic').classList.add('hidden'); document.getElementById('sysInfoHardware').classList.remove('hidden'); document.getElementById('sysInfoNetwork').classList.add('hidden');">硬件信息</button>
-                        <button class="tab" onclick="this.parentElement.querySelectorAll('.tab').forEach(t=>t.classList.remove('active')); this.classList.add('active'); document.getElementById('sysInfoBasic').classList.add('hidden'); document.getElementById('sysInfoHardware').classList.add('hidden'); document.getElementById('sysInfoNetwork').classList.remove('hidden');">网络信息</button>
+                        <button class="tab active" onclick="dashboardModule.switchSystemInfoTab('basic', this)">📋 基本信息</button>
+                        <button class="tab" onclick="dashboardModule.switchSystemInfoTab('hardware', this)">⚙️ 硬件详情</button>
+                        <button class="tab" onclick="dashboardModule.switchSystemInfoTab('health', this)">❤️ 健康检查</button>
+                        <button class="tab" onclick="dashboardModule.switchSystemInfoTab('performance', this)">📊 性能指标</button>
                     </div>
 
+                    <!-- 基本信息 -->
                     <div id="sysInfoBasic">
-                        <table class="data-table">
-                            <tbody>
-                                <tr><td><strong>主机名</strong></td><td>sec-server</td></tr>
-                                <tr><td><strong>操作系统</strong></td><td>Ubuntu 22.04 LTS (Jammy Jellyfish)</td></tr>
-                                <tr><td><strong>内核版本</strong></td><td>Linux 5.15.0-105-generic x86_64</td></tr>
-                                <tr><td><strong>架构</strong></td><td>x86_64 (64-bit)</td></tr>
-                                <tr><td><strong>运行时间</strong></td><td>45天 12小时 30分钟 15秒</td></tr>
-                                <tr><td><strong>时区</strong></td><td>Asia/Shanghai (UTC+8)</td></tr>
-                                <tr><td><strong>语言环境</strong></td><td>zh_CN.UTF-8</td></tr>
-                            </tbody>
-                        </table>
+                        <div class="grid grid-2" style="gap: 20px; margin-bottom: 24px;">
+                            <div style="background: var(--bg-secondary); padding: 20px; border-radius: var(--radius-md);">
+                                <h4 style="margin-bottom: 16px; color: var(--primary);">🖥️ 操作系统信息</h4>
+                                <table style="width: 100%; font-size: 14px;">
+                                    <tr><td style="padding: 8px; color: var(--text-secondary);">主机名:</td><td style="padding: 8px;"><code>sec-server-prod-01</code></td></tr>
+                                    <tr><td style="padding: 8px; color: var(--text-secondary);">操作系统:</td><td style="padding: 8px;">Ubuntu 22.04 LTS (Jammy Jellyfish)</td></tr>
+                                    <tr><td style="padding: 8px; color: var(--text-secondary);">内核版本:</td><td style="padding: 8px;"><code>Linux 5.15.0-105-generic x86_64</code></td></tr>
+                                    <tr><td style="padding: 8px; color: var(--text-secondary);">架构:</td><td style="padding: 8px;">x86_64 (64-bit)</td></tr>
+                                    <tr><td style="padding: 8px; color: var(--text-secondary);">运行时间:</td><td style="padding: 8px;"><strong style="color: var(--success);">45天 12小时 30分钟</strong></td></tr>
+                                </table>
+                            </div>
+
+                            <div style="background: var(--bg-secondary); padding: 20px; border-radius: var(--radius-md);">
+                                <h4 style="margin-bottom: 16px; color: var(--primary);">🌍 区域与语言设置</h4>
+                                <table style="width: 100%; font-size: 14px;">
+                                    <tr><td style="padding: 8px; color: var(--text-secondary);">时区:</td><td style="padding: 8px;">Asia/Shanghai (UTC+8)</td></tr>
+                                    <tr><td style="padding: 8px; color: var(--text-secondary);">系统时间:</td><td style="padding: 8px;"><strong>${new Date().toLocaleString()}</strong></td></tr>
+                                    <tr><td style="padding: 8px; color: var(--text-secondary);">语言环境:</td><td style="padding: 8px;"><code>zh_CN.UTF-8</code></td></tr>
+                                    <tr><td style="padding: 8px; color: var(--text-secondary);">字符集:</td><td style="padding: 8px;">UTF-8</td></tr>
+                                    <tr><td style="padding: 8px; color: var(--text-secondary);">系统编码:</td><td style="padding: 8px;">en_US.UTF-8 / zh_CN.UTF-8</td></tr>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div style="background: var(--bg-secondary); padding: 20px; border-radius: var(--radius-md);">
+                            <h4 style="margin-bottom: 16px; color: var(--primary);">📦 软件包信息</h4>
+                            <div class="grid grid-4" style="gap: 16px;">
+                                <div style="text-align: center; padding: 16px; background: var(--bg-tertiary); border-radius: var(--radius-md);">
+                                    <div style="font-size: 24px; font-weight: bold; color: var(--primary);">${Utils.randomInRange(1500, 2500)}</div>
+                                    <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">已安装软件包</div>
+                                </div>
+                                <div style="text-align: center; padding: 16px; background: var(--bg-tertiary); border-radius: var(--radius-md);">
+                                    <div style="font-size: 24px; font-weight: bold; color: var(--success);">${Utils.randomInRange(50, 150)}</div>
+                                    <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">可更新软件包</div>
+                                </div>
+                                <div style="text-align: center; padding: 16px; background: var(--bg-tertiary); border-radius: var(--radius-md);">
+                                    <div style="font-size: 24px; font-weight: bold; color: var(--warning);">${Utils.randomInRange(5, 20)}</div>
+                                    <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">安全更新</div>
+                                </div>
+                                <div style="text-align: center; padding: 16px; background: var(--bg-tertiary); border-radius: var(--radius-md);">
+                                    <div style="font-size: 24px; font-weight: bold; color: var(--info);">APT</div>
+                                    <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">包管理器</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
+                    <!-- 硬件详情 -->
                     <div id="sysInfoHardware" class="hidden">
-                        <table class="data-table">
-                            <tbody>
-                                <tr><td><strong>CPU型号</strong></td><td>Intel Xeon E5-2680 v4 @ 2.40GHz</td></tr>
-                                <tr><td><strong>CPU核心数</strong></td><td>8核 / 16线程</td></tr>
-                                <tr><td><strong>总内存</strong></td><td>16 GiB DDR4 ECC</td></tr>
-                                <tr><td><strong>可用内存</strong></td><td>11.8 GiB</td></tr>
-                                <tr><td><strong>磁盘容量</strong></td><td>512 GB SSD NVMe</td></tr>
-                                <tr><td><strong>磁盘使用</strong></td><td>128 GB (25%)</td></tr>
-                                <tr><td><strong>I/O调度器</strong></td><td>mq-deadline</td></tr>
-                            </tbody>
-                        </table>
+                        <div class="grid grid-2" style="gap: 20px; margin-bottom: 24px;">
+                            <div style="background: var(--bg-secondary); padding: 20px; border-radius: var(--radius-md);">
+                                <h4 style="margin-bottom: 16px; color: var(--primary);">💻 CPU处理器</h4>
+                                <table style="width: 100%; font-size: 14px;">
+                                    <tr><td style="padding: 6px; color: var(--text-secondary);">型号:</td><td style="padding: 6px;"><strong>Intel Xeon E5-2680 v4</strong></td></tr>
+                                    <tr><td style="padding: 6px; color: var(--text-secondary);">主频:</td><td style="padding: 6px;">2.40 GHz (最大 3.30 GHz Turbo)</td></tr>
+                                    <tr><td style="padding: 6px; color: var(--text-secondary);">核心/线程:</td><td style="padding: 6px;"><span class="status-badge info">8核 / 16线程</span></td></tr>
+                                    <tr><td style="padding: 6px; color: var(--text-secondary);">L3缓存:</td><td style="padding: 6px;">35 MB</td></tr>
+                                    <tr><td style="padding: 6px; color: var(--text-secondary);">架构:</td><td style="padding: 6px;">Broadwell-EP (14nm)</td></tr>
+                                    <tr><td style="padding: 6px; color: var(--text-secondary);">虚拟化:</td><td style="padding: 6px;"><span class="status-badge success">VT-x ✓</span> / <span class="status-badge success">AMD-V ✓</span></td></tr>
+                                </table>
+                                
+                                <hr style="border-color: var(--border-color); margin: 16px 0;">
+                                
+                                <h5 style="margin-bottom: 12px; font-size: 14px;">CPU实时状态</h5>
+                                <div style="display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px;">
+                                    ${Array.from({length: 16}, (_, i) => `
+                                        <div style="
+                                            height: 32px;
+                                            background: linear-gradient(to top, 
+                                                ${[10, 25, 45, 35, 60, 40, 55, 70, 30, 65, 50, 75, 85, 45, 60, 55][i] > 70 ? '#ef4444' : [10, 25, 45, 35, 60, 40, 55, 70, 30, 65, 50, 75, 85, 45, 60, 55][i] > 50 ? '#f59e0b' : '#10b981'} ${[10, 25, 45, 35, 60, 40, 55, 70, 30, 65, 50, 75, 85, 45, 60, 55][i]}%, 
+                                                transparent
+                                            );
+                                            border-radius: 3px;
+                                            display: flex;
+                                            align-items: flex-end;
+                                            justify-content: center;
+                                            font-size: 9px;
+                                            color: white;
+                                            font-weight: bold;
+                                        ">
+                                            ${[10, 25, 45, 35, 60, 40, 55, 70, 30, 65, 50, 75, 85, 45, 60, 55][i]}%
+                                        </div>
+                                    `).join('')}
+                                </div>
+                                <div style="margin-top: 8px; font-size: 11px; color: var(--text-secondary); text-align: center;">
+                                    每个核心实时使用率（共16个逻辑核心）
+                                </div>
+                            </div>
+
+                            <div style="background: var(--bg-secondary); padding: 20px; border-radius: var(--radius-md);">
+                                <h4 style="margin-bandottom: 16px; color: var(--primary);">🧠 内存子系统</h4>
+                                <table style="width: 100%; font-size: 14px;">
+                                    <tr><td style="padding: 6px; color: var(--text-secondary);">总容量:</td><td style="padding: 6px;"><strong>16 GiB DDR4 ECC</strong></td></tr>
+                                    <tr><td style="padding: 6px; color: var(--text-secondary);">类型:</td><td style="padding: 6px;">DDR4-2400 ECC Registered</td></tr>
+                                    <tr><td style="padding: 6px; color: var(--text-secondary);">通道数:</td><td style="padding: 6px;">四通道 (4x 4GB)</td></tr>
+                                    <tr><td style="padding: 6px; color: var(--text-secondary);">速度:</td><td style="padding: 6px;">2400 MT/s (PC4-19200)</td></tr>
+                                </table>
+
+                                <hr style="border-color: var(--border-color); margin: 16px 0;">
+
+                                <h5 style="margin-bottom: 12px; font-size: 14px;">内存使用分布</h5>
+                                <div style="space-y: 8px;">
+                                    ${[
+                                        { label: '应用程序', percent: 42, color: '#3b82f6' },
+                                        { label: '缓存/缓冲', percent: 28, color: '#10b981' },
+                                        { label: '内核占用', percent: 18, color: '#f59e0b' },
+                                        { label: '可用内存', percent: 12, color: '#6b7280' }
+                                    ].map(item => `
+                                        <div style="margin-bottom: 8px;">
+                                            <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px;">
+                                                <span>${item.label}</span>
+                                                <strong style="color: ${item.color};">${item.percent}% (${(item.percent * 160 / 1024).toFixed(1)} GB)</strong>
+                                            </div>
+                                            <div class="progress-bar" style="height: 8px;">
+                                                <div class="progress-fill" style="width: ${item.percent}%; background: ${item.color};"></div>
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="background: var(--bg-secondary); padding: 20px; border-radius: var(--radius-md);">
+                            <h4 style="margin-bottom: 16px; color: var(--primary);">💾 存储设备</h4>
+                            <div class="table-container">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>设备</th>
+                                            <th>类型</th>
+                                            <th>总容量</th>
+                                            <th>已用</th>
+                                            <th>可用</th>
+                                            <th>使用率</th>
+                                            <th>文件系统</th>
+                                            <th>挂载点</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><code>/dev/nvme0n1</code></td>
+                                            <td><span class="status-badge success">NVMe SSD</span></td>
+                                            <td><strong>500 GB</strong></td>
+                                            <td>128 GB</td>
+                                            <td>372 GB</td>
+                                            <td>
+                                                <div class="progress-bar" style="width: 80px; display: inline-block; vertical-align: middle;">
+                                                    <div class="progress-fill" style="width: 25.6%; background: #10b981;"></div>
+                                                </div>
+                                                <small style="vertical-align: middle;">25.6%</small>
+                                            </td>
+                                            <td><code>ext4</code></td>
+                                            <td><code>/</code></td>
+                                        </tr>
+                                        <tr>
+                                            <td><code>/dev/sda</code></td>
+                                            <td><span class="status-badge info">HDD</span></td>
+                                            <td><strong>2 TB</strong></td>
+                                            <td>1.2 TB</td>
+                                            <td>800 GB</td>
+                                            <td>
+                                                <div class="progress-bar" style="width: 80px; display: inline-block; vertical-align: middle;">
+                                                    <div class="progress-fill" style="width: 60%; background: #f59e0b;"></div>
+                                                </div>
+                                                <small style="vertical-align: middle;">60%</small>
+                                            </td>
+                                            <td><code>xfs</code></td>
+                                            <td><code>/data</code></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
 
-                    <div id="sysInfoNetwork" class="hidden">
-                        <table class="data-table">
-                            <tbody>
-                                <tr><td><strong>主IP地址</strong></td><td>192.168.1.100</td></tr>
-                                <tr><td><strong>子网掩码</strong></td><td>255.255.255.0</td></tr>
-                                <tr><td><strong>网关</strong></td><td>192.168.1.1</td></tr>
-                                <tr><td><strong>DNS服务器</strong></td><td>8.8.8.8, 8.8.4.4</td></tr>
-                                <tr><td><strong>MAC地址</strong></td><td>00:0C:29:XX:XX:XX</td></tr>
-                                <tr><td><strong>网络接口</strong></td><td>eth0 (1 Gbps, 全双工)</td></tr>
-                                <tr><td><strong>IPv6支持</strong></td><td>启用 (fe80::xxxx)</td></tr>
-                            </tbody>
-                        </table>
+                    <!-- 健康检查 -->
+                    <div id="sysInfoHealth" class="hidden">
+                        <div id="healthCheckResults" style="margin-bottom: 24px;"></div>
+                        
+                        <button class="btn btn-primary" onclick="dashboardModule.runHealthCheck()" style="width: 100%;">
+                            🔄 重新运行健康检查
+                        </button>
+                    </div>
+
+                    <!-- 性能指标 -->
+                    <div id="sysInfoPerformance" class="hidden">
+                        <div class="grid grid-2" style="gap: 20px; margin-bottom: 24px;">
+                            <div style="background: var(--bg-secondary); padding: 20px; border-radius: var(--radius-md);">
+                                <h4 style="margin-bottom: 16px; color: var(--primary);">⚡ CPU性能基准</h4>
+                                <div style="space-y: 12px;">
+                                    ${[
+                                        { metric: '单核性能', value: 2847, unit: '分', benchmark: 3000 },
+                                        { metric: '多核性能', value: 18234, unit: '分', benchmark: 20000 },
+                                        { metric: '加密性能 (AES)', value: 12500, unit: 'MB/s', benchmark: 15000 },
+                                        { metric: '压缩性能 (zlib)', value: 850, unit: 'MB/s', benchmark: 1000 }
+                                    ].map(item => {
+                                        const percent = Math.min((item.value / item.benchmark) * 100, 100);
+                                        const color = percent > 90 ? '#10b981' : percent > 70 ? '#f59e0b' : '#ef4444';
+                                        return `
+                                            <div style="margin-bottom: 16px;">
+                                                <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 6px;">
+                                                    <span>${item.metric}</span>
+                                                    <strong style="color: ${color};">${item.value.toLocaleString()} ${item.unit} (${percent.toFixed(0)}%)</strong>
+                                                </div>
+                                                <div class="progress-bar" style="height: 10px;">
+                                                    <div class="progress-fill" style="width: ${percent}%; background: ${color};"></div>
+                                                </div>
+                                            </div>
+                                        `;
+                                    }).join('')}
+                                </div>
+                            </div>
+
+                            <div style="background: var(--bg-secondary); padding: 20px; border-radius: var(--radius-md);">
+                                <h4 style="margin-bottom: 16px; color: var(--primary);">💾 存储I/O性能</h4>
+                                <div style="space-y: 12px;">
+                                    ${[
+                                        { metric: '顺序读取', value: 3200, unit: 'MB/s', benchmark: 3500 },
+                                        { metric: '顺序写入', value: 2800, unit: 'MB/s', benchmark: 3000 },
+                                        { metric: '随机读取 (4K)', value: 450000, unit: 'IOPS', benchmark: 500000 },
+                                        { metric: '随机写入 (4K)', value: 380000, unit: 'IOPS', benchmark: 400000 }
+                                    ].map(item => {
+                                        const percent = Math.min((item.value / item.benchmark) * 100, 100);
+                                        const color = percent > 90 ? '#10b981' : percent > 70 ? '#f59e0b' : '#ef4444';
+                                        return `
+                                            <div style="margin-bottom: 16px;">
+                                                <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 6px;">
+                                                    <span>${item.metric}</span>
+                                                    <strong style="color: ${color};">${item.value.toLocaleString()} ${item.unit}</strong>
+                                                </div>
+                                                <div class="progress-bar" style="height: 10px;">
+                                                    <div class="progress-fill" style="width: ${percent}%; background: ${color};"></div>
+                                                </div>
+                                            </div>
+                                        `;
+                                    }).join('')}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="background: var(--bg-secondary); padding: 20px; border-radius: var(--radius-md);">
+                            <h4 style="margin-bottom: 16px; color: var(--primary);">🌡️ 温度与功耗监测</h4>
+                            <div class="grid grid-3" style="gap: 16px;">
+                                <div style="text-align: center; padding: 16px; background: var(--bg-tertiary); border-radius: var(--radius-md);">
+                                    <div style="font-size: 32px; font-weight: bold; color: #10b981;">52°C</div>
+                                    <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">CPU温度</div>
+                                    <div style="height: 4px; background: #e5e7eb; border-radius: 2px; margin-top: 8px;">
+                                        <div style="width: 52%; height: 100%; background: #10b981; border-radius: 2px;"></div>
+                                    </div>
+                                    <div style="font-size: 10px; color: var(--text-muted); margin-top: 4px;">正常范围 &lt; 85°C</div>
+                                </div>
+                                <div style="text-align: center; padding: 16px; background: var(--bg-tertiary); border-radius: var(--radius-md);">
+                                    <div style="font-size: 32px; font-weight: bold; color: #3b82f6;">48°C</div>
+                                    <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">内存温度</div>
+                                    <div style="height: 4px; background: #e5e7eb; border-radius: 2px; margin-top: 8px;">
+                                        <div style="width: 48%; height: 100%; background: #3b82f6; border-radius: 2px;"></div>
+                                    </div>
+                                    <div style="font-size: 10px; color: var(--text-muted); margin-top: 4px;">正常范围 &lt; 80°C</div>
+                                </div>
+                                <div style="text-align: center; padding: 16px; background: var(--bg-tertiary); border-radius: var(--radius-md);">
+                                    <div style="font-size: 32px; font-weight: bold; color: #f59e0b;">145W</div>
+                                    <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">当前功耗</div>
+                                    <div style="height: 4px; background: #e5e7eb; border-radius: 2px; margin-top: 8px;">
+                                        <div style="width: 72.5%; height: 100%; background: #f59e0b; border-radius: 2px;"></div>
+                                    </div>
+                                    <div style="font-size: 10px; color: var(--text-muted); margin-top: 4px;">TDP限制 200W</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -645,6 +877,85 @@ class DashboardModule {
             </div>
         `;
         document.body.appendChild(modal);
+
+        this.runHealthCheck();
+    }
+
+    switchSystemInfoTab(tabId, element) {
+        document.querySelectorAll('.modal .tabs .tab').forEach(t => t.classList.remove('active'));
+        element.classList.add('active');
+
+        ['Basic', 'Hardware', 'Health', 'Performance'].forEach(tab => {
+            const el = document.getElementById(`sysInfo${tab}`);
+            if (el) {
+                el.style.display = tab.toLowerCase() === tabId ? 'block' : 'none';
+            }
+        });
+
+        if (tabId === 'health') {
+            this.runHealthCheck();
+        }
+    }
+
+    runHealthCheck() {
+        const container = document.getElementById('healthCheckResults');
+        if (!container) return;
+
+        container.innerHTML = '<div style="text-align: center; padding: 32px;"><div class="loading-spinner"></div><p style="margin-top: 12px;">正在运行系统健康检查...</p></div>';
+
+        setTimeout(() => {
+            const checks = [
+                { name: 'CPU运行状态', status: 'healthy', message: '所有16个核心正常运行，无过热警告', icon: '✅' },
+                { name: '内存完整性', status: 'healthy', message: 'ECC内存检测无错误，16GB全部识别', icon: '✅' },
+                { name: '磁盘健康状况', status: 'warning', message: 'NVMe SSD剩余寿命92%，建议关注', icon: '⚠️' },
+                { name: '网络连接性', status: 'healthy', message: 'eth0接口正常，延迟&lt;1ms，带宽1Gbps', icon: '✅' },
+                { name: '防火墙服务', status: 'healthy', message: 'iptables服务运行中，156条规则已加载', icon: '✅' },
+                { name: 'SSH服务安全', status: 'warning', message: '检测到密码认证，建议启用密钥认证', icon: '⚠️' },
+                { name: '系统更新状态', status: 'critical', message: '发现87个待更新包，其中12个为安全更新', icon: '🔴' },
+                { name: '备份任务状态', status: 'healthy', message: '最近一次备份：今天02:00，成功完成', icon: '✅' },
+                { name: 'Docker容器状态', status: 'healthy', message: '12个容器运行中，0个异常退出', icon: '✅' },
+                { name: '日志系统', status: 'healthy', message: 'rsyslog/journald正常运行，磁盘空间充足', icon: '✅' }
+            ];
+
+            const healthyCount = checks.filter(c => c.status === 'healthy').length;
+            const warningCount = checks.filter(c => c.status === 'warning').length;
+            const criticalCount = checks.filter(c => c.status === 'critical').length;
+            const overallScore = ((healthyCount * 100 + warningCount * 50) / checks.length).toFixed(0);
+
+            container.innerHTML = `
+                <div style="background: linear-gradient(135deg, ${overallScore >= 80 ? '#10b981' : overallScore >= 60 ? '#f59e0b' : '#ef4444'}, transparent); padding: 24px; border-radius: var(--radius-lg); margin-bottom: 24px; text-align: center;">
+                    <div style="font-size: 64px; font-weight: bold; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.2);">${overallScore}</div>
+                    <div style="font-size: 18px; color: white; margin-top: 8px;">综合健康评分</div>
+                    <div style="display: flex; justify-content: center; gap: 32px; margin-top: 16px; font-size: 14px;">
+                        <span style="color: rgba(255,255,255,0.9);">✅ ${healthyCount} 项正常</span>
+                        <span style="color: rgba(255,255,255,0.9);">⚠️ ${warningCount} 项警告</span>
+                        <span style="color: rgba(255,255,255,0.9);">🔴 ${criticalCount} 项严重</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-2" style="gap: 16px;">
+                    ${checks.map(check => `
+                        <div style="padding: 16px; background: var(--bg-tertiary); border-radius: var(--radius-md); border-left: 4px solid ${
+                            check.status === 'healthy' ? '#10b981' :
+                            check.status === 'warning' ? '#f59e0b' : '#ef4444'
+                        }; display: flex; gap: 12px; align-items: start;">
+                            <div style="font-size: 24px;">${check.icon}</div>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 600; margin-bottom: 4px;">${check.name}</div>
+                                <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.4;">${check.message}</div>
+                            </div>
+                            <span class="status-badge ${
+                                check.status === 'healthy' ? 'success' :
+                                check.status === 'warning' ? 'warning' : 'danger'
+                            }">${
+                                check.status === 'healthy' ? '正常' :
+                                check.status === 'warning' ? '警告' : '严重'
+                            }</span>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }, 2000);
     }
 
     startAutoRefresh() {

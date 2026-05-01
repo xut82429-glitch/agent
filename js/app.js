@@ -33,6 +33,8 @@ class App {
             networkModule = new NetworkModule();
             backupModule = new BackupModule();
             settingsModule = new SettingsModule();
+            dockerModule = new DockerModule();
+            notificationCenter = new NotificationCenter();
 
             console.log('📦 All modules initialized:', Object.keys(this.modules).length);
         } catch (error) {
@@ -128,7 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.app.init();
 
     const hash = window.location.hash.slice(1);
-    if (hash && ['dashboard', 'firewall', 'users', 'services', 'logs', 'intrusion', 'vulnerability', 'network', 'backup', 'settings'].includes(hash)) {
+    if (hash && ['dashboard', 'firewall', 'users', 'services', 'logs', 'intrusion', 'vulnerability', 'network', 'backup', 'settings', 'docker', 'notifications'].includes(hash)) {
         showPage(hash);
     }
 
